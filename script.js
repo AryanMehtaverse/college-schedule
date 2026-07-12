@@ -17,8 +17,26 @@ const timetable = {
 // ===== Holidays =====
 // Add more holidays here any time — { date: "YYYY-MM-DD", name: "..." }
 const holidays = [
+  { date: "2026-01-01", name: "New Year" },
+  { date: "2026-01-26", name: "Republic Day" },
+  { date: "2026-02-15", name: "Mahashivratri" },
+  { date: "2026-03-03", name: "Holi" },
+  { date: "2026-03-19", name: "Gudhi Padwa" },
+  { date: "2026-03-21", name: "Ramzan-Eid" },
+  { date: "2026-04-03", name: "Good Friday" },
+  { date: "2026-05-01", name: "Maharashtra Day" },
+  { date: "2026-05-28", name: "Bakri Eid" },
   { date: "2026-08-15", name: "Independence Day" },
+  { date: "2026-09-05", name: "GopalKala" },
+  { date: "2026-09-14", name: "Ganesh Chaturthi" },
+  { date: "2026-09-25", name: "Anant Chaturdashi" },
   { date: "2026-10-02", name: "Gandhi Jayanti" },
+  { date: "2026-10-20", name: "Dussehra" },
+  { date: "2026-11-08", name: "Diwali (Laxmipujan)" },
+  { date: "2026-11-09", name: "Diwali" },
+  { date: "2026-11-10", name: "Diwali (Balipratipada)" },
+  { date: "2026-11-11", name: "Diwali (Bhaubeej)" },
+  { date: "2026-12-06", name: "Dr. Babasaheb Ambedkar Mahaparinirvan Din" },
   { date: "2026-12-25", name: "Christmas" }
 ];
 
