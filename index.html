@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>College Schedule</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Ambient gradient background blobs -->
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+  <div class="bg-blob blob-3"></div>
+
+  <button id="themeToggle" class="theme-toggle" aria-label="Toggle light/dark mode">
+    <span id="themeIcon">☀️</span>
+  </button>
+
+  <main class="app">
+
+    <!-- ===== Header ===== -->
+    <header class="app-header">
+      <p class="greeting" id="greeting">Hello 👋</p>
+      <h1 class="clock" id="clock">00:00:00</h1>
+      <p class="date-line" id="dateLine">Loading date…</p>
+    </header>
+
+    <!-- ===== Tab bar ===== -->
+    <nav class="tab-bar" id="tabBar">
+      <button class="tab-btn" data-view="today">Today</button>
+      <button class="tab-btn active" data-view="next">Next Day</button>
+      <button class="tab-btn" data-view="weekly">Weekly</button>
+      <button class="tab-btn" data-view="holidays">Holidays</button>
+      <span class="tab-indicator" id="tabIndicator"></span>
+    </nav>
+
+    <section class="view-container">
+
+      <!-- ===== Today view ===== -->
+      <div id="todayView" class="view hidden">
+        <div class="glass-card schedule-card" id="todayCard">
+          <p class="card-label" id="todayLabel">Today</p>
+          <h2 class="day-name" id="todayDayName">Monday</h2>
+          <p class="day-date" id="todayDate">1 January 2026</p>
+
+          <div class="info-grid" id="todayInfoGrid">
+            <div class="info-row">
+              <div class="info-icon">🕘</div>
+              <div class="info-text">
+                <span class="info-title">College Starts</span>
+                <span class="info-value" id="todayStart">—</span>
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-icon">☕</div>
+              <div class="info-text">
+                <span class="info-title">Break</span>
+                <span class="info-value" id="todayBreak">—</span>
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-icon">🏫</div>
+              <div class="info-text">
+                <span class="info-title">College Ends</span>
+                <span class="info-value" id="todayEnd">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Next College Day view ===== -->
+      <div id="nextView" class="view">
+        <!-- Optional banner: shown when tomorrow is a holiday / weekend -->
+        <div class="glass-card banner-card hidden" id="skipBanner">
+          <p class="banner-icon" id="skipBannerIcon">🎉</p>
+          <p class="banner-title" id="skipBannerTitle">Tomorrow is a Holiday</p>
+          <p class="banner-sub" id="skipBannerSub">Holiday Name</p>
+        </div>
+
+        <div class="glass-card schedule-card">
+          <p class="card-label">Next College Day</p>
+          <h2 class="day-name" id="nextDayName">Monday</h2>
+          <p class="day-date" id="nextDayDate">1 January 2026</p>
+
+          <div class="info-grid">
+            <div class="info-row">
+              <div class="info-icon">🕘</div>
+              <div class="info-text">
+                <span class="info-title">College Starts</span>
+                <span class="info-value" id="nextStart">—</span>
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-icon">☕</div>
+              <div class="info-text">
+                <span class="info-title">Break</span>
+                <span class="info-value" id="nextBreak">—</span>
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-icon">🏫</div>
+              <div class="info-text">
+                <span class="info-title">College Ends</span>
+                <span class="info-value" id="nextEnd">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Weekly Timetable view ===== -->
+      <div id="weeklyView" class="view hidden">
+        <div class="glass-card weekly-card">
+          <h2 class="weekly-title">Weekly Timetable</h2>
+          <div class="table-wrap">
+            <table class="weekly-table" id="weeklyTable">
+              <thead>
+                <tr>
+                  <th>Day</th>
+                  <th>Start</th>
+                  <th>Break</th>
+                  <th>End</th>
+                </tr>
+              </thead>
+              <tbody id="weeklyTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Holidays view ===== -->
+      <div id="holidaysView" class="view hidden">
+        <h2 class="section-title">Holidays</h2>
+        <div class="holiday-list" id="holidayList">
+          <!-- Holiday cards injected by JS -->
+        </div>
+        <p class="empty-state hidden" id="noHolidays">No upcoming holidays.</p>
+      </div>
+
+    </section>
+
+    <footer class="app-footer">
+      <p>Made with 💙 for Mom</p>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
