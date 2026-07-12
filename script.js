@@ -40,9 +40,36 @@ const holidays = [
   { date: "2026-12-25", name: "Christmas" }
 ];
 
+// ===== Academic Calendar (Odd Semester / Term I, 2026) =====
+// Add more entries here any time — { name, start: "YYYY-MM-DD", end: "YYYY-MM-DD", vacation? }
+const academicCalendar = [
+  { name: "Commencement of Term", start: "2026-07-13", end: "2026-11-05" },
+  { name: "Mid Term Test I", start: "2026-08-17", end: "2026-08-22" },
+  { name: "Mid Term Test (Management subjects)", start: "2026-09-07", end: "2026-09-12" },
+  { name: "Mid Term Test II", start: "2026-10-05", end: "2026-10-10" },
+  { name: "Diwali Vacation", start: "2026-11-06", end: "2026-11-12", vacation: true },
+  { name: "Term End Exam", start: "2026-11-16", end: "2026-12-03" },
+  { name: "TEE Lab Exam", start: "2026-12-05", end: "2026-12-10" },
+  { name: "Re-exam", start: "2027-01-28", end: "2027-02-08" }
+];
+
 const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const ORDERED_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-const VIEWS = ["today", "next", "weekly", "holidays"];
+const VIEWS = ["today", "next", "weekly", "holidays", "calendar"];
+const VIEW_ID = {
+  today: "todayView",
+  next: "nextView",
+  weekly: "weeklyView",
+  holidays: "holidaysView",
+  calendar: "calendarView"
+};
+const VIEW_RENDERERS = {
+  today: renderToday,
+  next: renderNextDay,
+  weekly: renderWeeklyTable,
+  holidays: renderHolidays,
+  calendar: renderCalendar
+};
 
 // ===== Date helpers =====
 
@@ -260,6 +287,33 @@ function renderHolidays() {
   });
 }
 
+// ===== Rendering: Academic Calendar view =====
+function renderCalendar() {
+  const list = document.getElementById("calendarList");
+  list.innerHTML = "";
+
+  academicCalendar.forEach((entry) => {
+    const start = new Date(`${entry.start}T00:00:00`);
+    const end = new Date(`${entry.end}T00:00:00`);
+    const sameDay = entry.start === entry.end;
+    const range = sameDay
+      ? formatDate(start)
+      : `${formatShortDate(start)} – ${formatDate(end)}`;
+
+    const card = document.createElement("div");
+    card.className = `glass-card calendar-card${entry.vacation ? " vacation-card" : ""}`;
+    card.innerHTML = `
+      <div class="calendar-icon">${entry.vacation ? "🏖️" : "🎓"}</div>
+      <div class="calendar-info">
+        <span class="calendar-name">${entry.name}</span>
+        <span class="calendar-range">${range}</span>
+        ${entry.vacation ? '<span class="calendar-tag">No College</span>' : ""}
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
 // ===== View switching =====
 let currentView = "next";
 
@@ -267,20 +321,16 @@ function switchView(view) {
   currentView = view;
 
   VIEWS.forEach((v) => {
-    const el = document.getElementById(`${v === "today" ? "today" : v === "next" ? "next" : v === "weekly" ? "weekly" : "holidays"}View`);
-    el.classList.add("hidden");
+    document.getElementById(VIEW_ID[v]).classList.add("hidden");
   });
 
-  const activeEl = document.getElementById(`${view === "today" ? "today" : view === "next" ? "next" : view === "weekly" ? "weekly" : "holidays"}View`);
+  const activeEl = document.getElementById(VIEW_ID[view]);
   activeEl.classList.remove("hidden");
   activeEl.style.animation = "none";
   void activeEl.offsetWidth;
   activeEl.style.animation = "";
 
-  if (view === "today") renderToday();
-  if (view === "next") renderNextDay();
-  if (view === "weekly") renderWeeklyTable();
-  if (view === "holidays") renderHolidays();
+  VIEW_RENDERERS[view]();
 
   updateTabUI(view);
 }
