@@ -6,9 +6,9 @@
 // ===== Timetable data =====
 const timetable = {
   Monday:    { start: "10:00 AM", break: null,                  end: "2:00 PM" },
-  Tuesday:   { start: "10:00 AM", break: null,                  end: "2:00 PM" },
-  Wednesday: { start: "8:00 AM",  break: "10:00 AM - 12:00 PM", end: "2:00 PM" },
-  Thursday:  { start: "10:00 AM", break: null,                  end: "12:00 PM" },
+  Tuesday:   { start: "8:00 AM",  break: "10:00 AM - 12:00 PM", end: "2:00 PM" },
+  Wednesday: { start: "8:00 AM",  break: null,                  end: "10:00 AM" },
+  Thursday:  { start: "10:00 AM", break: null,                  end: "2:00 PM" },
   Friday:    { start: "9:00 AM",  break: "10:00 AM - 12:00 PM", end: "4:00 PM" },
   Saturday:  null,
   Sunday:    null
