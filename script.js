@@ -4,9 +4,7 @@
 // =====================================================================
 
 // ===== Timetable data =====
-// Ships with this default schedule; can be overridden in-browser via the
-// Weekly tab's Edit button, which persists changes to localStorage.
-const DEFAULT_TIMETABLE = {
+const timetable = {
   Monday:    { start: "10:00 AM", break: null,                  end: "2:00 PM" },
   Tuesday:   { start: "10:00 AM", break: null,                  end: "2:00 PM" },
   Wednesday: { start: "8:00 AM",  break: "10:00 AM - 12:00 PM", end: "2:00 PM" },
@@ -15,20 +13,6 @@ const DEFAULT_TIMETABLE = {
   Saturday:  null,
   Sunday:    null
 };
-
-const TIMETABLE_STORAGE_KEY = "customTimetable";
-
-function loadTimetable() {
-  try {
-    const saved = localStorage.getItem(TIMETABLE_STORAGE_KEY);
-    if (saved) return JSON.parse(saved);
-  } catch (e) {
-    // Ignore malformed storage and fall back to default
-  }
-  return structuredClone(DEFAULT_TIMETABLE);
-}
-
-let timetable = loadTimetable();
 
 // ===== Holidays =====
 // Add more holidays here any time — { date: "YYYY-MM-DD", name: "..." }
@@ -241,117 +225,30 @@ function renderNextDay() {
 }
 
 // ===== Rendering: Weekly Timetable view =====
-let isEditingTimetable = false;
-let pendingTimetable = null;
-
 function renderWeeklyTable() {
   const tbody = document.getElementById("weeklyTableBody");
   tbody.innerHTML = "";
   const todayName = DAY_NAMES[new Date().getDay()];
-  const source = isEditingTimetable ? pendingTimetable : timetable;
 
   ORDERED_DAYS.forEach((day) => {
-    const data = source[day];
+    const data = timetable[day];
     const tr = document.createElement("tr");
     if (day === todayName) tr.classList.add("current-day");
     if (data === null) tr.classList.add("weekend-row");
 
-    if (isEditingTimetable) {
-      tr.innerHTML = `
-        <td>${day}</td>
-        <td><input type="text" data-day="${day}" data-field="start" value="${data ? data.start : ""}" placeholder="No College"></td>
-        <td><input type="text" data-day="${day}" data-field="break" value="${data && data.break ? data.break : ""}" placeholder="No Break"></td>
-        <td><input type="text" data-day="${day}" data-field="end" value="${data ? data.end : ""}" placeholder="No College"></td>
-      `;
-    } else {
-      const start = data ? data.start : "No College";
-      const end = data ? data.end : "No College";
-      const breakText = data && data.break ? data.break : "No Break";
-      const breakClass = !data || !data.break ? "no-break-cell" : "";
-      tr.innerHTML = `
-        <td>${day}</td>
-        <td>${start}</td>
-        <td class="${breakClass}">${breakText}</td>
-        <td>${end}</td>
-      `;
-    }
+    const start = data ? data.start : "No College";
+    const end = data ? data.end : "No College";
+    const breakText = data && data.break ? data.break : "No Break";
+    const breakClass = !data || !data.break ? "no-break-cell" : "";
+
+    tr.innerHTML = `
+      <td>${day}</td>
+      <td>${start}</td>
+      <td class="${breakClass}">${breakText}</td>
+      <td>${end}</td>
+    `;
     tbody.appendChild(tr);
   });
-
-  renderWeeklyToolbar();
-}
-
-function renderWeeklyToolbar() {
-  const toolbar = document.getElementById("toolbarActions");
-  const hint = document.getElementById("editHint");
-
-  toolbar.innerHTML = isEditingTimetable
-    ? `
-      <button class="toolbar-btn save-btn" id="saveTimetableBtn">Save</button>
-      <button class="toolbar-btn" id="resetTimetableBtn">Reset</button>
-      <button class="toolbar-btn cancel-btn" id="cancelTimetableBtn">Cancel</button>
-    `
-    : `<button class="toolbar-btn" id="editTimetableBtn">✏️ Edit</button>`;
-
-  hint.classList.toggle("hidden", !isEditingTimetable);
-
-  if (isEditingTimetable) {
-    document.getElementById("saveTimetableBtn").addEventListener("click", saveTimetableEdits);
-    document.getElementById("resetTimetableBtn").addEventListener("click", () => {
-      pendingTimetable = structuredClone(DEFAULT_TIMETABLE);
-      renderWeeklyTable();
-    });
-    document.getElementById("cancelTimetableBtn").addEventListener("click", () => {
-      isEditingTimetable = false;
-      pendingTimetable = null;
-      renderWeeklyTable();
-    });
-  } else {
-    document.getElementById("editTimetableBtn").addEventListener("click", () => {
-      isEditingTimetable = true;
-      pendingTimetable = structuredClone(timetable);
-      renderWeeklyTable();
-    });
-  }
-}
-
-// Live-updates the in-memory draft as the user types, without re-rendering
-// the table (which would steal focus out of the input mid-edit).
-function handleTimetableInput(e) {
-  const input = e.target.closest("input[data-day]");
-  if (!input || !isEditingTimetable) return;
-
-  const day = input.dataset.day;
-  const field = input.dataset.field;
-  if (!pendingTimetable[day]) {
-    pendingTimetable[day] = { start: "", break: null, end: "" };
-  }
-
-  if (field === "break") {
-    const val = input.value.trim();
-    pendingTimetable[day].break = val === "" ? null : val;
-  } else {
-    pendingTimetable[day][field] = input.value;
-  }
-}
-
-function saveTimetableEdits() {
-  ORDERED_DAYS.forEach((day) => {
-    const data = pendingTimetable[day];
-    const start = data ? data.start.trim() : "";
-    const end = data ? data.end.trim() : "";
-
-    pendingTimetable[day] = (start === "" || end === "")
-      ? null
-      : { start, break: data.break, end };
-  });
-
-  timetable = pendingTimetable;
-  localStorage.setItem(TIMETABLE_STORAGE_KEY, JSON.stringify(timetable));
-
-  isEditingTimetable = false;
-  pendingTimetable = null;
-  renderWeeklyTable();
 }
 
 // ===== Rendering: Holidays view =====
@@ -421,12 +318,6 @@ function renderCalendar() {
 let currentView = "next";
 
 function switchView(view) {
-  // Discard any unsaved timetable edits when navigating away from Weekly
-  if (currentView === "weekly" && view !== "weekly" && isEditingTimetable) {
-    isEditingTimetable = false;
-    pendingTimetable = null;
-  }
-
   currentView = view;
 
   VIEWS.forEach((v) => {
@@ -507,8 +398,6 @@ function init() {
   });
 
   document.getElementById("themeToggle").addEventListener("click", toggleTheme);
-
-  document.getElementById("weeklyTableBody").addEventListener("input", handleTimetableInput);
 }
 
 document.addEventListener("DOMContentLoaded", init);
