@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>College Schedule</title>
-<link rel="stylesheet" href="style.css?v=3" />
+<link rel="stylesheet" href="style.css?v=4" />
 </head>
 <body>
 
@@ -114,7 +114,12 @@
       <!-- ===== Weekly Timetable view ===== -->
       <div id="weeklyView" class="view hidden">
         <div class="glass-card weekly-card">
-          <h2 class="weekly-title">Weekly Timetable</h2>
+          <div class="weekly-toolbar">
+            <h2 class="weekly-title">Weekly Timetable</h2>
+            <div class="toolbar-actions" id="toolbarActions">
+              <button class="toolbar-btn" id="editTimetableBtn">✏️ Edit</button>
+            </div>
+          </div>
           <div class="table-wrap">
             <table class="weekly-table" id="weeklyTable">
               <thead>
@@ -128,6 +133,7 @@
               <tbody id="weeklyTableBody"></tbody>
             </table>
           </div>
+          <p class="edit-hint hidden" id="editHint">Leave Start or End blank to mark a day as No College.</p>
         </div>
       </div>
 
@@ -160,6 +166,6 @@
     </footer>
   </main>
 
-  <script src="script.js?v=3"></script>
+  <script src="script.js?v=4"></script>
 </body>
 </html>
